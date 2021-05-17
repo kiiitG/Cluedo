@@ -12,6 +12,10 @@ public class RoomListingMenu : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        if (hover != null) {
+           hover.DetachChildren();
+        }
+        listings.Clear();
         for (int i = 0; i < roomList.Count; i++)
         {
             if (roomList[i].RemovedFromList)

@@ -30,7 +30,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4463018164576004410}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -103,8 +103,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 38752665103420381}
-  - {fileID: 4137502684316192311}
   - {fileID: 2499391933281068918}
+  - {fileID: 4137502684316192311}
   m_Father: {fileID: 4137502684723213256}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -151,12 +151,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4463018164576004410}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 70}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -150}
+  m_SizeDelta: {x: -100, y: -230}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4137502684316192265
 CanvasRenderer:
@@ -198,7 +198,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: nkjn
+  m_Text: vhjvuyvuyv
 --- !u!1 &4137502684723213257
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,6 +262,7 @@ MonoBehaviour:
   picture: {fileID: 5773339326024826477}
   cloud: {fileID: 2116774396622480080}
   message: {fileID: 2301284624255784221}
+  frame: {fileID: 6724285640391110818}
 --- !u!1 &4858545132229751056
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,12 +328,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 0bbea6cb99d3d304b8c3a84cd644adc6, type: 3}
+    m_Font: {fileID: 12800000, guid: 3bef439e8e8b1c541b30fbe75163a737, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 25
+    m_MaxSize: 30
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 0

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
-using System;
 using System.Collections.Generic;
 
 public class Board : MonoBehaviour
@@ -9,13 +8,10 @@ public class Board : MonoBehaviour
 
     private Tilemap tilemap;
 
-    List<Vector3Int> outerCells = new List<Vector3Int>();
     List<Vector3Int> doors = new List<Vector3Int>();
     Dictionary<string, Vector3Int> rooms = new Dictionary<string, Vector3Int>();
     Dictionary<string, List<Vector3Int>> roomsToDoors = new Dictionary<string, List<Vector3Int>>();
-    private string[] roomName = { "Hall", "Lounge",
-        "Dining Room", "Kitchen", "Ballroom", "Conservatory",
-    "Billiard Room", "Library", "Study" };
+    private string[] roomName = { "Hall", "Lounge", "Dining Room", "Kitchen", "Ballroom", "Conservatory", "Billiard Room", "Library", "Study" };
 
     public void Awake()
     {
@@ -56,7 +52,7 @@ public class Board : MonoBehaviour
                 return;
             }
         }
-        playerController.GoOnCell(cellPosition, tile.name);
+        playerController.GoOnCell(cellPosition, "outer");
     }
 
     public void ChooseSecretPassage()
@@ -64,18 +60,22 @@ public class Board : MonoBehaviour
         string cellType = playerController.CellType;
         if (cellType == "Lounge")
         {
+            playerController.OnPassageButtonClick();
             playerController.GoOnCell(rooms["Conservatory"], "Conservatory");
         }
         else if (cellType == "Conservatory")
         {
+	    playerController.OnPassageButtonClick();
             playerController.GoOnCell(rooms["Lounge"], "Lounge");
         }
         else if (cellType == "Kitchen")
         {
+	    playerController.OnPassageButtonClick();
             playerController.GoOnCell(rooms["Study"], "Study");
         }
         else if (cellType == "Study")
         {
+	    playerController.OnPassageButtonClick();
             playerController.GoOnCell(rooms["Kitchen"], "Kitchen");
         }
     }
@@ -106,7 +106,7 @@ public class Board : MonoBehaviour
         rooms.Add("Lounge", new Vector3Int(9, 9, 0));
         rooms.Add("Dining Room", new Vector3Int(9, 0, 0));
         rooms.Add("Kitchen", new Vector3Int(9, -10, 0));
-        rooms.Add("Ball Room", new Vector3Int(0, -9, 0));
+        rooms.Add("Ballroom", new Vector3Int(0, -9, 0));
         rooms.Add("Conservatory", new Vector3Int(-9, -10, 0));
         rooms.Add("Billiard Room", new Vector3Int(-9, -3, 0));
         rooms.Add("Library", new Vector3Int(-9, 3, 0));

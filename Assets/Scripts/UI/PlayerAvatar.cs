@@ -9,6 +9,7 @@ public class PlayerAvatar : MonoBehaviour
     [SerializeField] private Image picture;
     [SerializeField] private Image cloud;
     [SerializeField] private Text message;
+    [SerializeField] private Image frame;
 
     public void Awake()
     {
@@ -30,6 +31,16 @@ public class PlayerAvatar : MonoBehaviour
         this.picture.sprite = picture;
     }
 
+    public void OnMyTurn()
+    {
+        frame.color = Color.red;
+    }
+
+    public void OnOtherTurn()
+    {
+        frame.color = Color.white;
+    }
+
     public void Say(string message)
     {
         Debug.Log(nickname.text + " says " + message);
@@ -49,6 +60,5 @@ public class PlayerAvatar : MonoBehaviour
         message.text = "";
         Tween anotherTween = cloud.DOFade(0, 2.5f);
         yield return anotherTween.WaitForCompletion();
-        Debug.Log("Tween completed!");
     }
 }

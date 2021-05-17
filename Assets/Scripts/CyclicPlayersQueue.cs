@@ -44,6 +44,10 @@ public class CyclicPlayersQueue
 
     public void Next()
     {
+        if (inactive.Count == count - 1) {
+            turnSetter?.Invoke(-1);
+            return;
+        }
         do
         {
             currentId = (currentId % count) + 1;

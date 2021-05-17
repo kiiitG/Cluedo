@@ -1,31 +1,24 @@
 ﻿using UnityEngine;
 using Photon.Pun;
-using System;
+using Photon.Realtime;
 
 public class GameNetworkController : MonoBehaviourPunCallbacks
 {
-    public void Awake()
-    {
-        PhotonNetwork.AutomaticallySyncScene = true;
+    [SerializeField] private UIManager uiManager;
 
-        PhotonNetwork.ConnectUsingSettings();
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        base.OnDisconnected(cause);
     }
 
-    public override void OnConnectedToMaster()
+    public override void OnLeftRoom()
     {
-        Photon.Realtime.RoomOptions op = new Photon.Realtime.RoomOptions();
-        op.MaxPlayers = 6;
-        PhotonNetwork.JoinOrCreateRoom("kek", op, Photon.Realtime.TypedLobby.Default);
+        base.OnLeftRoom();
     }
 
-    public override void OnJoinRandomFailed(short returnCode, string message)
+    public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        base.OnJoinRandomFailed(returnCode, message);
-        Debug.Log("failed");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        PhotonNetwork.LoadLevel("Game");
+        base.OnPlayerLeftRoom(otherPlayer);
+        uiManager.OnPlayerLeftGame(otherPlayer.NickName);
     }
 }

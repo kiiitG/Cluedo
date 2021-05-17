@@ -24,7 +24,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Transform avatarPanel;
     [SerializeField] private Canvas cardPanel;
 
-    [SerializeField] private Transform notifyPanel;
     [SerializeField] private Text notifyText;
 
     [SerializeField] private Transform versionPanel;
@@ -33,32 +32,11 @@ public class UIManager : MonoBehaviour
 
     public void Awake()
     {
-        Debug.Log("ui awake");
         CloseTable();
         for (int i = 0; i < dice.Length; i++)
         {
             dice[i].DOFade(0, 0);
         }
-    }
-
-    public void Start()
-    {
-        Debug.Log("ui start " + PhotonNetwork.LocalPlayer.ActorNumber);
-    }
-
-    public void SetLeftCards(Card[] left)
-    {
-        if (left == null)
-        {
-            return;
-        }
-        Toggle[] toggles = tablePanel.GetComponentsInChildren<Toggle>();
-        toggles[left[0].GetId()].isOn = true;
-        toggles[left[0].GetId()].interactable = false;
-        toggles[left[1].GetId()].isOn = true;
-        toggles[left[1].GetId()].interactable = false;
-        toggles[left[2].GetId()].isOn = true;
-        toggles[left[2].GetId()].interactable = false;
     }
 
     #region Setters
@@ -83,24 +61,58 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void SetTurn(int id)
+    {
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        {
+            if (i != id - 1)
+            {
+                avatars[id - 1].OnOtherTurn();
+            }
+            else
+            {
+                avatars[id - 1].OnMyTurn();
+            }
+        }
+    }
+
     #endregion
 
     public void OnMyTurn()
     {
-        Debug.Log("ui on my turn");
-        //Block();
+        Block();
         diceButton.interactable = true;
-        notifyText.text = "This is your turn";
+        secretButton.interactable = true;
+        Notify("This is your turn");
+    }
+
+    private void Notify(string text)
+    {
+        notifyText.text = text;
+        StartCoroutine(notifyTween());
+    }
+
+    IEnumerator notifyTween()
+    {
+        Tween tween = notifyText.DOFade(1, 1);
+        yield return tween.WaitForCompletion();
+        tween = notifyText.DOFade(0, 1);
+        yield return tween.WaitForCompletion();
     }
 
     public void OnDiceButtonClick()
     {
-        Debug.Log("ui on dice button click");
-        notifyText.text = "";
-        //diceButton.interactable = false;
+        diceButton.interactable = false;
+        secretButton.interactable = false;
         for (int i = 0; i < dice.Length; i++) {
             StartCoroutine(DiceTween(i));
         }
+    }
+
+    public void OnPassageButtonClick()
+    {
+        diceButton.interactable = false;
+        secretButton.interactable = false;
     }
 
     IEnumerator DiceTween(int i)
@@ -108,12 +120,10 @@ public class UIManager : MonoBehaviour
         Sequence tween = DOTween.Sequence().Append(dice[i].DOFade(1, 0.5f))
             .Append(dice[i].DOFade(0, 0.5f));
         yield return tween.WaitForCompletion();
-        print("tween completed");
     }
 
     public void OnMakeSuggestion()
     {
-        Debug.Log("on move release");
         versionButton.interactable = true;
         tryButton.interactable = true;
         ShowTable();
@@ -121,25 +131,26 @@ public class UIManager : MonoBehaviour
 
     public void OnVersionSet(int currentId, GameObject[] version)
     {
-        Debug.Log("ui on version set");
         CloseTable();
         ShowVersion(currentId, version);
+        versionButton.interactable = false;
+        tryButton.interactable = false;
     }
 
-    public void OnOtherTurn()
+    public void OnOtherTurn(string nickname)
     {
-        Debug.Log("ui on other turn");
+        Notify("This is " + nickname + "'s turn");
         Block();
     }
 
     public void OnShowCard(int id)
     {
-        Debug.Log("ui on show card");
         UnblockShowCard(id);
     }
 
     public void OnHaveCardResponse(int id, int showId, GameObject card)
     {
+        BlockShowCard(id);
         ShowCard(id, showId, card);
     }
 
@@ -158,24 +169,26 @@ public class UIManager : MonoBehaviour
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == id)
         {
-            notifyText.text = "you won";
+            Notify("you won");
         }
         else
         {
-            notifyText.text = "player " + id + " won";
+            Notify("player " + id + " won");
         }
+        versionPanel.DetachChildren();
+        ShowVersion(id, version);
+        Block();
     }
 
-    public void OnPlayerLoose(int id, GameObject[] version)
+    public void OnPlayerLeftGame(string nickname)
     {
-        if (PhotonNetwork.LocalPlayer.ActorNumber == id)
-        {
-            notifyText.text = "you loose";
-        }
-        else
-        {
-            notifyText.text = "player " + id + " loose";
-        }
+        notifyText.text = "player " + nickname + " has left the room.\nThe game is finished";
+        Block();
+    }
+
+    public void OnPlayerLoose(string nickname)
+    {
+        Notify("player " + nickname + " loose");
     }
 
     public Transform GetCardPanel()
@@ -245,8 +258,8 @@ public class UIManager : MonoBehaviour
 
     IEnumerator kek(GameObject card)
     {
-        GameObject c = Instantiate(card, notifyPanel);
-        c.GetComponentInChildren<Image>().transform.DOScale(new Vector3(2, 2, 2), 3);
+        GameObject c = Instantiate(card, notifyText.transform);
+        c.GetComponentInChildren<Image>().transform.DOScale(new Vector3(3, 3, 3), 3);
         yield return new WaitForSeconds(3);
         Destroy(c.gameObject);
     }
@@ -261,20 +274,9 @@ public class UIManager : MonoBehaviour
         versionPanel.DetachChildren();
     }
 
-    private void SayNothing(int id)
-    {
-        Debug.Log("SayNothing");
-        avatars[id - 1].Say("");
-    }
-
     private void SayHaveCard(int id)
     {
         avatars[id - 1].Say("I have the card");
-    }
-
-    public void Remove()
-    {
-        notifyPanel.DetachChildren();
     }
 
     private void BlockShowCard(int id)
@@ -287,23 +289,14 @@ public class UIManager : MonoBehaviour
 
     private void UnblockShowCard(int id)
     {
-        Debug.Log("ui unblock show card " + id + " " + PhotonNetwork.LocalPlayer.ActorNumber);
         if (PhotonNetwork.LocalPlayer.ActorNumber == id)
         {
             showButton.interactable = true;
         }
     }
-
-    private void ShowResponse(int id, bool response)
-    {
-        Debug.Log("show reponse");
-        if (response)
-        {
-            avatars[id - 1].Say("I have this card");
-        }
-        else
-        {
-            avatars[id - 1].Say("I don't have this card");
-        }
+  
+    public void OnGameFinished() {
+        Notify("Game is over");
+        Block();
     }
 }

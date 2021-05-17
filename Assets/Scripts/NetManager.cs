@@ -16,6 +16,8 @@ public class NetManager : MonoBehaviourPunCallbacks
     [SerializeField] private Canvas nicknamePanel;
     [SerializeField] private InputField nickname;
 
+    [SerializeField] private Text notifyText;
+
     public void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -23,7 +25,6 @@ public class NetManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
-        PhotonNetwork.Disconnect();
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.GameVersion = "1";
         PhotonNetwork.NetworkingClient.AppVersion = "1";
@@ -52,6 +53,7 @@ public class NetManager : MonoBehaviourPunCallbacks
 
     public void OnEnteredNicknameButtonClick()
     {
+        notifyText.text = "";
         if (nickname.text.Length == 0)
         {
             PhotonNetwork.LocalPlayer.NickName = "player";
@@ -62,11 +64,26 @@ public class NetManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.NickName = nickname.text;
             Destroy(nicknamePanel.gameObject);
         }
+        else
+        {
+            notifyText.text = "too long name";
+        }
     }
 
     public void OnStartGameButtonClick()
     {
-        // if (PhotonNetwork.CurrentRoom.PlayerCount >= 2)
-        PhotonNetwork.LoadLevel("Game");
+        if (PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        {
+            PhotonNetwork.LoadLevel("Game");
+        }
+        else
+        {
+            notifyText.text = "must be more than 1 player";
+        }
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        notifyText.text = "connection is failed";
     }
 }

@@ -83,7 +83,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  id: 3
+  id: 2
   name: Mr. Green
   type: 2
   tabled: 0

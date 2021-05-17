@@ -14,6 +14,7 @@ public class CardCollection : MonoBehaviour, IOnEventCallback
     [SerializeField] private PlayerController playerController;
     private GameObject[] cards;
     private int[] order;
+    [SerializeField] private Transform cardPanel;
 
     public void Awake()
     {
@@ -25,7 +26,7 @@ public class CardCollection : MonoBehaviour, IOnEventCallback
         cards = new GameObject[21];
         for (int i = 0; i < prefabs.Length; i++)
         {
-            cards[i] = Instantiate(prefabs[i]);
+            cards[i] = Instantiate(prefabs[i], cardPanel);
         }
     }
 
@@ -35,6 +36,11 @@ public class CardCollection : MonoBehaviour, IOnEventCallback
         {
             return cards[index];
         }
+    }
+
+    public GameObject[] GetRightVersion()
+    {
+        return new GameObject[] { cards[order[18]], cards[order[19]], cards[order[20]] };
     }
 
     private void Shuffle()

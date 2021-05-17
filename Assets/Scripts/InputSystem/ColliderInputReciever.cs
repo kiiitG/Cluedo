@@ -44,7 +44,6 @@ public class ColliderInputReciever : InputReciever
         if (isTouching)
         {
             touchPosition = touchControl.Touch.TouchPosition.ReadValue<Vector2>();
-            // Debug.Log("touch at " + touchPosition);
             if (touchDone && GetComponent<Collider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(touchPosition)))
             {
                 Debug.Log("touch is caught");

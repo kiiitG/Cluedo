@@ -3,6 +3,7 @@ using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public delegate void Desicion(int id, bool isRight);
 
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     Dictionary<string, List<Vector3Int>> roomsToDoors = new Dictionary<string, List<Vector3Int>>();
     string[] roomName = new string[] { "Study", "Library", "Billiard Room", "Conservatory",
     "Hall", "Ball Room", "Kitchen", "Dining Room", "Lounge" };
+    string[] nicknames;
 
     private void FillOuterCells()
     {
@@ -251,6 +253,7 @@ public class PlayerController : MonoBehaviour
         InitializePlayersNames();
 
         cellType = "outer";
+        nicknames = GetNames();
 
         CreatePlayerOnBoard();
         pView = player.GetComponent<PhotonView>();
@@ -303,7 +306,7 @@ public class PlayerController : MonoBehaviour
             };
         }
 
-        uiManager.SetLeftCards(left);
+        table.SetLeftCards(left);
 
         playersQueue.Next();
     }
@@ -331,7 +334,11 @@ public class PlayerController : MonoBehaviour
 
     public void SetTurn(int id)
     {
-        Debug.Log("set turn");
+        if (id == -1)
+        {
+            uiManager.OnGameFinished();
+            return;
+        }
         currentId = id;
         showCardQueue = new SinglePlayersQueue(currentId, OnShowCardQueueSwithed);
         if (IsMyTurn)
@@ -340,7 +347,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            uiManager.OnOtherTurn();
+            uiManager.OnOtherTurn(nicknames[id - 1]);
         }
     }
 
@@ -366,12 +373,10 @@ public class PlayerController : MonoBehaviour
         Debug.Log("set shown card");
         if (id == -1)
         {
-            Debug.Log("have no card");
             StartCoroutine(kek());
         }
         else
         {
-            Debug.Log("have a card");
             shownCard = cardCollection[id];
             StartCoroutine(kek2());
         }
@@ -409,23 +414,35 @@ public class PlayerController : MonoBehaviour
 
         uiManager.OnVersionSet(currentId, this.version);
         bool isRight = CheckVersion(version);
+
         if (isRight)
         {
-            uiManager.OnPlayerWon(currentId, new GameObject[] {
-                cardCollection[version[0]],
-                cardCollection[version[1]],
-                cardCollection[version[2]]
-            });
+            StartCoroutine(AccuseRightEnumerator());
         }
         else
         {
-            uiManager.OnPlayerLoose(currentId, new GameObject[] {
-                cardCollection[version[0]],
-                cardCollection[version[1]],
-                cardCollection[version[2]]
-            });
-            playersQueue.SetInactive(id);
+            StartCoroutine(AccuseWrongEnumerator());
         }
+    }
+
+    IEnumerator AccuseWrongEnumerator()
+    {
+        GameObject[] rightVersion = cardCollection.GetRightVersion();
+        playersQueue.SetInactive(currentId);
+        uiManager.OnPlayerLoose(PhotonNetwork.CurrentRoom.Players[currentId].NickName);
+        if (IsMyTurn)
+        {
+            //player.GetComponent<SpriteRenderer>().sprite = null;
+            table.SetRightVersion(rightVersion);
+        }
+        yield return new WaitForSeconds(2);
+        OnPlayerFinishedTurn();
+    }
+
+    IEnumerator AccuseRightEnumerator() {
+        GameObject[] rightVersion = cardCollection.GetRightVersion();
+        uiManager.OnPlayerWon(currentId, rightVersion);
+        yield return new WaitForSeconds(3);
     }
 
     private bool CheckVersion(int[] version)
@@ -449,25 +466,22 @@ public class PlayerController : MonoBehaviour
 
     public void GoOnCell(Vector3Int cell, string cellType)
     {
-        Debug.Log("go on " + cellType + " cell");
-        if (cellType != "")
+        if (canMove)
         {
+            Debug.Log("go on " + cellType + " cell");
             this.cellType = cellType;
-        }
-        canMove = true;
-        if (pView.IsMine && canMove)
-        {
-            Move(cell);
-        }
-        PlayerFinishedMove?.Invoke();
-        canMove = false;
-        if (cellType.Contains("outer"))
-        {
-            pView.RPC("MakeVersion_RPC", RpcTarget.All, new int[] {});
-        }
-        else
-        {
-            uiManager.OnMakeSuggestion();
+            if (pView.IsMine)
+            {
+                Move(cell);
+            }
+            if (cellType.Contains("outer"))
+            {
+                pView.RPC("MakeVersion_RPC", RpcTarget.All, new int[] { });
+            }
+            else
+            {
+                uiManager.OnMakeSuggestion();
+            }
         }
     }
 
@@ -499,6 +513,7 @@ public class PlayerController : MonoBehaviour
         if (chosenCard == null)
         {
             pView.RPC("ShowCard_RPC", RpcTarget.All, -1);
+            return;
         }
         if (version[0].GetComponent<Card>().GetId() != chosenCard.GetId() &&
             version[1].GetComponent<Card>().GetId() != chosenCard.GetId() &&
@@ -507,6 +522,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
         pView.RPC("ShowCard_RPC", RpcTarget.All, chosenCard.GetComponent<Card>().GetId());
+    }
+
+    public void OnPassageButtonClick()
+    {
+        canMove = true;
+        uiManager.OnPassageButtonClick();
     }
 
     public void Accuse()
@@ -527,6 +548,11 @@ public class PlayerController : MonoBehaviour
         uiManager.SwitchTable();
     }
 
+    public void OnExitButtonClick()
+    {
+        SceneManager.LoadScene("MultiplayerMenu");
+    }
+
     #endregion
 
     #region Utils
@@ -534,6 +560,8 @@ public class PlayerController : MonoBehaviour
     {
         player.transform.position = cell + new Vector3(0.5f, 0.5f, 0);
         currentPosition = cell;
+        PlayerFinishedMove?.Invoke();
+        canMove = false;
     }
 
     private void OnShowCardQueueSwithed()
