@@ -21,9 +21,6 @@ public class Card : Button
     [SerializeField] private int id;
     [SerializeField] private new string name;
     [SerializeField] private CardType type;
-    [SerializeField] private bool tabled;
-
-    private bool isSelected = false;
 
     protected override void Awake()
     {
@@ -33,11 +30,10 @@ public class Card : Button
 
     public void SetTableSelectionState(bool isSelected)
     {
-        this.isSelected = isSelected;
         Debug.Log(name + " is selected = " + isSelected);
         if (isSelected)
         {
-            GetComponent<Image>().color = Color.green;
+            GetComponent<Image>().color = Color.gray;
         }
         else
         {
@@ -63,5 +59,19 @@ public class Card : Button
     public void OnCardSelected()
     {
         CardChosen?.Invoke(this);
+    }
+
+    public override bool Equals(object other)
+    {
+        if (other.GetType() != typeof(Card))
+        {
+            return false;
+        }
+        return id == ((Card)other).GetId();
+    }
+
+    public override int GetHashCode()
+    {
+        return id;
     }
 }

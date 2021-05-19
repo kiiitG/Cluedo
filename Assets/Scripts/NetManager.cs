@@ -46,6 +46,11 @@ public class NetManager : MonoBehaviourPunCallbacks
         Debug.Log("room is created");
     }
 
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        notifyText.text = "connection to room is failed";
+    }
+
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby(TypedLobby.Default);
@@ -66,7 +71,7 @@ public class NetManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            notifyText.text = "too long name";
+            notifyText.text = "too long nickname";
         }
     }
 

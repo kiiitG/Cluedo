@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7942942618211994902}
   - component: {fileID: 1110175916298377391}
   - component: {fileID: 2244049772302645103}
+  - component: {fileID: 8931455763073695144}
   m_Layer: 5
   m_Name: Billiard Room
   m_TagString: Untagged
@@ -122,6 +123,18 @@ MonoBehaviour:
   name: Billiard Room
   type: 0
   tabled: 0
+--- !u!114 &8931455763073695144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3373597242982629351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1e4f814efd65634191ff069ad1353f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6288792023763944548
 GameObject:
   m_ObjectHideFlags: 0

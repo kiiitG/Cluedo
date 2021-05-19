@@ -61,17 +61,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetTurn(int id)
+    public void OnSetTurn(int id)
     {
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < avatars.Length; i++)
         {
-            if (i != id - 1)
+            if (i == id - 1)
             {
-                avatars[id - 1].OnOtherTurn();
+                avatars[i].OnSetTurn();
             }
             else
             {
-                avatars[id - 1].OnMyTurn();
+                avatars[i].OnDropTurn();
             }
         }
     }
@@ -162,7 +162,7 @@ public class UIManager : MonoBehaviour
 
     private void SayNoCards(int id)
     {
-        avatars[id - 1].Say("I don't have this card.");
+        avatars[id - 1].Say("I don't have any card");
     }
 
     public void OnPlayerWon(int id, GameObject[] version)
@@ -182,7 +182,7 @@ public class UIManager : MonoBehaviour
 
     public void OnPlayerLeftGame(string nickname)
     {
-        notifyText.text = "player " + nickname + " has left the room.\nThe game is finished";
+        Notify(nickname + " left the room");
         Block();
     }
 
@@ -225,11 +225,16 @@ public class UIManager : MonoBehaviour
         avatars[id - 1].Say("I think it's " + version[0].GetComponent<Card>().GetName() + " " + 
             version[1].GetComponent<Card>().GetName() + " " + 
             version[2].GetComponent<Card>().GetName());
-        GameObject character = Instantiate(version[0], new Vector3(), Quaternion.identity);
+        ShowCards(version);
+    }
+
+    private void ShowCards(GameObject[] cards)
+    {
+        GameObject character = Instantiate(cards[0], new Vector3(), Quaternion.identity);
         character.transform.SetParent(versionPanel);
-        GameObject tool = Instantiate(version[1], new Vector3(), Quaternion.identity);
+        GameObject tool = Instantiate(cards[1], new Vector3(), Quaternion.identity);
         tool.transform.SetParent(versionPanel);
-        GameObject room = Instantiate(version[2], new Vector3(), Quaternion.identity);
+        GameObject room = Instantiate(cards[2], new Vector3(), Quaternion.identity);
         room.transform.SetParent(versionPanel);
     }
 
@@ -295,8 +300,15 @@ public class UIManager : MonoBehaviour
         }
     }
   
-    public void OnGameFinished() {
+    public void OnGameFinished(GameObject[] answer) {
         Notify("Game is over");
+        ShowCards(answer);
+        Block();
+    }
+
+    public void OnDisconnected()
+    {
+        Notify("connection is failed");
         Block();
     }
 }

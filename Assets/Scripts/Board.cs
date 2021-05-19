@@ -26,7 +26,6 @@ public class Board : MonoBehaviour
         {
             visited.Add(position, false);
             depth.Add(position, -1);
-            print(tilemap.GetTile<Tile>(position)?.name);
         }
     }
 
@@ -58,24 +57,25 @@ public class Board : MonoBehaviour
     public void ChooseSecretPassage()
     {
         string cellType = playerController.CellType;
+        playerController.CanMove = true;
         if (cellType == "Lounge")
         {
-            playerController.OnPassageButtonClick();
+            playerController.GoThroughPassage();
             playerController.GoOnCell(rooms["Conservatory"], "Conservatory");
         }
         else if (cellType == "Conservatory")
         {
-	    playerController.OnPassageButtonClick();
+	    playerController.GoThroughPassage();
             playerController.GoOnCell(rooms["Lounge"], "Lounge");
         }
         else if (cellType == "Kitchen")
         {
-	    playerController.OnPassageButtonClick();
+	    playerController.GoThroughPassage();
             playerController.GoOnCell(rooms["Study"], "Study");
         }
         else if (cellType == "Study")
         {
-	    playerController.OnPassageButtonClick();
+	    playerController.GoThroughPassage();
             playerController.GoOnCell(rooms["Kitchen"], "Kitchen");
         }
     }

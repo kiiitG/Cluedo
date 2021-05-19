@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3373597242982629273}
   - component: {fileID: 3579625878608352469}
   - component: {fileID: 7651999896367380594}
+  - component: {fileID: 181910621782077230}
   m_Layer: 5
   m_Name: Ms. Scarlet
   m_TagString: Untagged
@@ -120,6 +121,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd48f2bfb6a46374c8d27237725ae09e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &181910621782077230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3373597242982629351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1e4f814efd65634191ff069ad1353f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5373774182600342749

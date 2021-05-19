@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public delegate void Desicion(int id, bool isRight);
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, CluedoPlayer
 {
     [SerializeField] private UIManager uiManager;
     [SerializeField] private ClueTable table;
@@ -202,7 +202,7 @@ public class PlayerController : MonoBehaviour
 
     private int dice;
 
-    private Card[] cards;
+    private List<Card> cards;
     private Card chosenCard;
     private GameObject[] version = new GameObject[3];
 
@@ -214,6 +214,13 @@ public class PlayerController : MonoBehaviour
     SinglePlayersQueue showCardQueue;
 
     public string cellType;
+    public bool CanMove
+    {
+        set
+        {
+            canMove = value;
+        }
+    }
 
     public Vector3Int CurrentPosition
     {
@@ -284,11 +291,11 @@ public class PlayerController : MonoBehaviour
         int countForPlayer = 18 / playerCount;
         int start = playerId * countForPlayer;
         int end = start + countForPlayer;
-        cards = new Card[countForPlayer];
+        cards = new List<Card>();
         for (int i = start; i < end; i++)
         {
             cardCollection[order[i]].transform.SetParent(uiManager.GetCardPanel(), false);
-            cards[i - start] = cardCollection[order[i]].GetComponent<Card>();
+            cards.Add(cardCollection[order[i]].GetComponent<Card>());
             cards[i - start].CardChosen += SetChosenCard;
         }
 
@@ -336,11 +343,12 @@ public class PlayerController : MonoBehaviour
     {
         if (id == -1)
         {
-            uiManager.OnGameFinished();
+            uiManager.OnGameFinished(cardCollection.GetRightVersion());
             return;
         }
         currentId = id;
         showCardQueue = new SinglePlayersQueue(currentId, OnShowCardQueueSwithed);
+        uiManager.OnSetTurn(currentId);
         if (IsMyTurn)
         {
             uiManager.OnMyTurn();
@@ -432,7 +440,6 @@ public class PlayerController : MonoBehaviour
         uiManager.OnPlayerLoose(PhotonNetwork.CurrentRoom.Players[currentId].NickName);
         if (IsMyTurn)
         {
-            //player.GetComponent<SpriteRenderer>().sprite = null;
             table.SetRightVersion(rightVersion);
         }
         yield return new WaitForSeconds(2);
@@ -485,7 +492,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void MakeVersion()
+    public void MakeSuggestion()
     {
         int[] version;
         try
@@ -507,9 +514,15 @@ public class PlayerController : MonoBehaviour
         pView.RPC("MakeVersion_RPC", RpcTarget.All, version);
     }
 
-    public void ShowCard()
+    public void Answer()
     {
-        print("ShowCard");
+        if (chosenCard == null &&
+            (cards.Contains(version[0].GetComponent<Card>()) ||
+            cards.Contains(version[1].GetComponent<Card>()) ||
+            cards.Contains(version[2].GetComponent<Card>())))
+        {
+            return;
+        }
         if (chosenCard == null)
         {
             pView.RPC("ShowCard_RPC", RpcTarget.All, -1);
@@ -524,13 +537,13 @@ public class PlayerController : MonoBehaviour
         pView.RPC("ShowCard_RPC", RpcTarget.All, chosenCard.GetComponent<Card>().GetId());
     }
 
-    public void OnPassageButtonClick()
+    public void GoThroughPassage()
     {
         canMove = true;
         uiManager.OnPassageButtonClick();
     }
 
-    public void Accuse()
+    public void MakeAccusation()
     {
         try
         {
@@ -540,7 +553,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("version is not valid");
         }
-        // make timer
     }
 
     public void SwitchTable()
@@ -550,7 +562,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnExitButtonClick()
     {
-        SceneManager.LoadScene("MultiplayerMenu");
+        PhotonNetwork.LeaveRoom();
     }
 
     #endregion

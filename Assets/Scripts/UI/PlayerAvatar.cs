@@ -16,6 +16,16 @@ public class PlayerAvatar : MonoBehaviour
         cloud.DOFade(0, 0);
     }
 
+    public void OnSetTurn()
+    {
+        frame.color = Color.red;
+    }
+
+    public void OnDropTurn()
+    {
+        frame.color = Color.black;
+    }
+    
     public string GetNickName()
     {
         return this.nickname.text;
@@ -29,16 +39,6 @@ public class PlayerAvatar : MonoBehaviour
     public void SetPicture(Sprite picture)
     {
         this.picture.sprite = picture;
-    }
-
-    public void OnMyTurn()
-    {
-        frame.color = Color.red;
-    }
-
-    public void OnOtherTurn()
-    {
-        frame.color = Color.white;
     }
 
     public void Say(string message)

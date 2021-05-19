@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 1038851240780738416}
   - component: {fileID: 6933453354926905879}
   - component: {fileID: 6927664397083303625}
+  - component: {fileID: -635262956227737773}
   m_Layer: 5
   m_Name: Colonel Mustard
   m_TagString: Untagged
@@ -210,5 +211,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd48f2bfb6a46374c8d27237725ae09e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-635262956227737773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3373597242982629351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1e4f814efd65634191ff069ad1353f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

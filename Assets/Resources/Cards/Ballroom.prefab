@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8541240711829799839}
   - component: {fileID: 2403072772101358684}
   - component: {fileID: 8399240059462552035}
+  - component: {fileID: 1217032527834279101}
   m_Layer: 5
   m_Name: Ballroom
   m_TagString: Untagged
@@ -122,6 +123,18 @@ MonoBehaviour:
   name: Ballroom
   type: 0
   tabled: 0
+--- !u!114 &1217032527834279101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3373597242982629351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1e4f814efd65634191ff069ad1353f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6606288733582106065
 GameObject:
   m_ObjectHideFlags: 0
